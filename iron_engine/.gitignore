@@ -1,0 +1,33 @@
+$gitignoreContent = @"
+# Visual Studio files
+.vs/
+*.vsidx
+
+*.user
+*.suo
+*.sdf
+*.opensdf
+*.db
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+
+# Executable
+*.exe
+*.dll
+
+# Visual Studio Solution
+*.sln
+
+# Visual Studio Project
+*.vcxproj
+*.vcxproj.filters
+"@
+
+   $gitignoreContent | Out-File -FilePath .gitignore -Encoding ascii
+   Get-Content .gitignore
