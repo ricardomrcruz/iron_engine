@@ -1,33 +1,35 @@
-$gitignoreContent = @"
 # Visual Studio files
-.vs/
-*.vsidx
+   .vs/
+   *.user
+   *.userosscache
+   *.sdf
+   *.opensdf
+   *.VC.db
+   *.VC.VC.opendb
 
-*.user
-*.suo
-*.sdf
-*.opensdf
-*.db
+   # Build results
+   [Dd]ebug/
+   [Dd]ebugPublic/
+   [Rr]elease/
+   [Rr]eleases/
+   x64/
+   x86/
+   bld/
+   [Bb]in/
+   [Oo]bj/
+   [Ll]og/
 
-# Build results
-[Dd]ebug/
-[Rr]elease/
-x64/
-x86/
-[Bb]in/
-[Oo]bj/
+   # Visual C++ cache files
+   ipch/
+   *.aps
+   *.ncb
+   *.opendb
+   *.cachefile
+   *.VC.db
+   *.VC.VC.opendb
 
-# Executable
-*.exe
-*.dll
-
-# Visual Studio Solution
-*.sln
-
-# Visual Studio Project
-*.vcxproj
-*.vcxproj.filters
-"@
-
-   $gitignoreContent | Out-File -FilePath .gitignore -Encoding ascii
-   Get-Content .gitignore
+   # Other files and folders to ignore
+   *.log
+   *.tlog
+   *.idb
+   *.pdb
