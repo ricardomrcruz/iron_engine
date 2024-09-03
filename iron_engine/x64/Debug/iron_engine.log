@@ -1,2 +1,5 @@
 ﻿  iron_engine.cpp
+  shaderClass.cpp
+  Generating Code...
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   iron_engine.vcxproj -> G:\visualstudio\iron_engine\x64\Debug\iron_engine.exe
