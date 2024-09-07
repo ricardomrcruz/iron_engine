@@ -98,6 +98,7 @@ int main()
 		// Tell OpenGL which Shader Program we want to use
 		shaderProgram.Activate();
 
+		//
 		glUniform1f(uniID, 0.5f);
 
 		// Bind the VAO so OpenGL knows to use it
