@@ -2,29 +2,27 @@
 #define GLFW_DLL
 #include <GLFW/glfw3.h>
 #include <iostream>
-
+#include<stb/stb_image.h>
 #include"shaderClass.h"
 #include"VAO.h"
 #include"VBO.h"
 #include"EBO.h"
 
 
+// Vertices coordinates
 GLfloat vertices[] =
-{
-	//		coordinates					/			colors
-	-0.5f,  -0.5f * float(sqrt(3)) / 3,		0.0f, 0.8f, 0.3f, 0.02f,//lower left corner
-	0.5f,   -0.5f * float(sqrt(3)) / 3,		0.0f, 0.8f, 0.3f, 0.02f,// lower right corner
-	0.0f,   0.5f  * float(sqrt(3)) * 2 / 3,	0.0f, 1.0f, 0.6f, 0.32f,// Upper corner
-	-0.25f, 0.5f  * float(sqrt(3)) / 6,		0.0f, 0.9f, 0.45f, 0.17f, // Inner left
-	0.25f,  0.5f  * float(sqrt(3)) / 6,		0.0f, 0.9f, 0.45f, 0.17f,// Inner right
-	0.0f,   -0.5f * float(sqrt(3)) / 3,		0.0f, 0.8f, 0.3f, 0.02f,  // Inner down
+{ //     COORDINATES     /        COLORS      /   TexCoord  //
+	-0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f, // Lower left corner
+	-0.5f,  0.5f, 0.0f,     0.0f, 1.0f, 0.0f, // Upper left corner
+	 0.5f,  0.5f, 0.0f,     0.0f, 0.0f, 1.0f, // Upper right corner
+	 0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f  // Lower right corner
 };
 
+// Indices for vertices order
 GLuint indices[] =
 {
-	0, 3, 5, // lower left triangle
-	3, 2, 4, //lower right triangle
-	5, 4, 1 // upper triangle
+	0, 2, 1, // Upper triangle
+	0, 3, 2 // Lower triangle
 };
 
 
@@ -87,6 +85,18 @@ int main()
 
 	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
 
+	// texture
+
+	int widthImg, heightImg, numColCh;
+	unsigned char* bytes = stbi_load("image.png", &widthImg, &heightImg, &numColCh, 0);
+
+	GLuint texture;
+	glGenTextures(1, &texture);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	// gl nearest et gl linear see differences - texturing style
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	
 	while (!glfwWindowShouldClose(window))
 	{
@@ -98,13 +108,13 @@ int main()
 		// Tell OpenGL which Shader Program we want to use
 		shaderProgram.Activate();
 
-		//
+		//assigns a value to the uniform; note: Must always be done after activating the Shader Program
 		glUniform1f(uniID, 0.5f);
 
 		// Bind the VAO so OpenGL knows to use it
 		VAO1.Bind();
 		// Draw primitives, number of indices, datatype of indices, index of indices
-		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
 		// Take care of all GLFW events
@@ -116,6 +126,7 @@ int main()
 	VAO1.Delete();
 	VBO1.Delete();
 	EBO1.Delete();
+	glDeleteTextures(1, &texture);
 	shaderProgram.Delete();
 	// Delete window before ending the program
 	glfwDestroyWindow(window);
