@@ -1,8 +1,15 @@
+
 #include <glad/glad.h>
 #define GLFW_DLL
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include<stb/stb_image.h>
+#include<iostream>
+#include<glad/glad.h>
+#include<GLFW/glfw3.h>
+#include<stb/stb_image.h>
+
+//#include"Texture.h"
 #include"shaderClass.h"
 #include"VAO.h"
 #include"VBO.h"
@@ -11,11 +18,11 @@
 
 // Vertices coordinates
 GLfloat vertices[] =
-{ //     COORDINATES     /       COLORS     /   TexCoord  //
-	-0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f,   0.0f, 0.0f,   // Lower left corner
-	-0.5f,  0.5f, 0.0f,     0.0f, 1.0f, 0.0f,   0.0f, 1.0f,   // Upper left corner
-	 0.5f,  0.5f, 0.0f,     0.0f, 0.0f, 1.0f,   1.0f, 1.0f,   // Upper right corner
-	 0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f,   1.0f, 0.0f,   // Lower right corner
+{ //     COORDINATES     /        COLORS      /   TexCoord  //
+	-0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f,	0.0f, 0.0f, // Lower left corner
+	-0.5f,  0.5f, 0.0f,     0.0f, 1.0f, 0.0f,	0.0f, 1.0f, // Upper left corner
+	 0.5f,  0.5f, 0.0f,     0.0f, 0.0f, 1.0f,	1.0f, 1.0f, // Upper right corner
+	 0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f,	1.0f, 0.0f  // Lower right corner
 };
 
 // Indices for vertices order
@@ -75,20 +82,25 @@ int main()
 	// Generates Element Buffer Object and links it to indices
 	EBO EBO1(indices, sizeof(indices));
 
-	// Links VBO to VAO
-	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
-	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	// Links VBO attributes such as coordinates and colors to VAO
+	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	VAO1.LinkAttrib(VBO1, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	// Unbind all to prevent accidentally modifying them
 	VAO1.Unbind();
 	VBO1.Unbind();
 	EBO1.Unbind();
 
+	// Gets ID of uniform called "scale"
 	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
 
-	// texture
-
+	// Texture loading
 	int widthImg, heightImg, numColCh;
-	unsigned char* bytes = stbi_load("image.png", &widthImg, &heightImg, &numColCh, 0);
+	unsigned char* bytes = stbi_load("pop_cat.png", &widthImg, &heightImg, &numColCh, 0);
+	if (!bytes) {
+		std::cerr << "Failed to load texture: " << stbi_failure_reason() << std::endl;
+		// Handle error (e.g., exit program or use a default texture)
+	}
 
 	GLuint texture;
 	glGenTextures(1, &texture);
@@ -112,6 +124,10 @@ int main()
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 
+	GLuint tex0Uni = glGetUniformLocation(shaderProgram.ID, "tex0");
+	shaderProgram.Activate();
+	glUniform1i(tex0Uni, 0);
+
 	
 	while (!glfwWindowShouldClose(window))
 	{
@@ -125,6 +141,7 @@ int main()
 
 		//assigns a value to the uniform; note: Must always be done after activating the Shader Program
 		glUniform1f(uniID, 0.5f);
+		glBindTexture(GL_TEXTURE_2D, texture);
 
 		// Bind the VAO so OpenGL knows to use it
 		VAO1.Bind();

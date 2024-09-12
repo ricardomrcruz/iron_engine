@@ -64,7 +64,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="C:\Users\ricar\Desktop\image.png">
+    <Image Include="C:\Users\ricar\Desktop\pop_cat.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="img\image.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
   </ItemGroup>
