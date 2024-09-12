@@ -1,4 +1,6 @@
 
+
+
 #include <glad/glad.h>
 #define GLFW_DLL
 #include <GLFW/glfw3.h>
@@ -9,7 +11,7 @@
 #include<GLFW/glfw3.h>
 #include<stb/stb_image.h>
 
-//#include"Texture.h"
+#include"Texture.h"
 #include"shaderClass.h"
 #include"VAO.h"
 #include"VBO.h"
@@ -94,40 +96,12 @@ int main()
 	// Gets ID of uniform called "scale"
 	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
 
-	// Texture loading
-	int widthImg, heightImg, numColCh;
-	unsigned char* bytes = stbi_load("pop_cat.png", &widthImg, &heightImg, &numColCh, 0);
-	if (!bytes) {
-		std::cerr << "Failed to load texture: " << stbi_failure_reason() << std::endl;
-		// Handle error (e.g., exit program or use a default texture)
-	}
+	
+	// Texture
+	Texture wallTex("image.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	wallTex.texUnit(shaderProgram, "tex0", 0);
 
-	GLuint texture;
-	glGenTextures(1, &texture);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	// gl nearest et gl linear see differences - texturing style:;
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	//float flatColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
-	//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, flatColor);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	stbi_image_free(bytes);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-
-	GLuint tex0Uni = glGetUniformLocation(shaderProgram.ID, "tex0");
-	shaderProgram.Activate();
-	glUniform1i(tex0Uni, 0);
-
+	
 	
 	while (!glfwWindowShouldClose(window))
 	{
@@ -141,7 +115,7 @@ int main()
 
 		//assigns a value to the uniform; note: Must always be done after activating the Shader Program
 		glUniform1f(uniID, 0.5f);
-		glBindTexture(GL_TEXTURE_2D, texture);
+		wallTex.Bind();
 
 		// Bind the VAO so OpenGL knows to use it
 		VAO1.Bind();
@@ -158,7 +132,7 @@ int main()
 	VAO1.Delete();
 	VBO1.Delete();
 	EBO1.Delete();
-	glDeleteTextures(1, &texture);
+	wallTex.Delete();
 	shaderProgram.Delete();
 	// Delete window before ending the program
 	glfwDestroyWindow(window);
